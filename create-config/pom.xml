@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.update4j</groupId>
+		<artifactId>demo</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<name>Update4j Demo Create Configuration</name>
+	<artifactId>create-config</artifactId>
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-config</id>
+						<phase>package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includeProjectDependencies>true</includeProjectDependencies>
+					<mainClass>org.update4j.demo.config.CreateConfig</mainClass>
+					<systemProperties>
+						<systemProperty>
+							<key>maven.dir</key>
+							<value>${root}</value>
+						</systemProperty>
+						<systemProperty>
+							<key>target</key>
+							<value>${target}</value>
+						</systemProperty>
+						<systemProperty>
+							<key>config.location</key>
+							<value>${config.location}</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
