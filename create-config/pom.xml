@@ -9,7 +9,7 @@
 	</parent>
 	<name>Update4j Demo Create Configuration</name>
 	<artifactId>create-config</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<build>
 		<plugins>
