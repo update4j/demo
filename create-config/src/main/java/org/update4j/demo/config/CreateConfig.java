@@ -20,7 +20,9 @@ public class CreateConfig {
 
     public static void main(String[] args) throws IOException {
 
-        String dir = System.getProperty("config.location") + "/business";
+
+        String configLoc = System.getProperty("config.location");
+        String dir = configLoc + "/business";
 
         Configuration config = Configuration.builder()
                         .baseUri("http://docs.update4j.org/demo/business")
@@ -45,7 +47,7 @@ public class CreateConfig {
             config.write(out);
         }
 
-        dir = System.getProperty("config.location") + "/bootstrap";
+        dir = configLoc + "/bootstrap";
 
         copyJavafx();
 
@@ -70,7 +72,7 @@ public class CreateConfig {
                         .property("maven.central.javafx", "${maven.central}/org/openjfx/")
                         .build();
 
-        try (Writer out = Files.newBufferedWriter(Paths.get(dir + "/setup.xml"))) {
+        try (Writer out = Files.newBufferedWriter(Paths.get(configLoc + "/setup.xml"))) {
             config.write(out);
         }
 
