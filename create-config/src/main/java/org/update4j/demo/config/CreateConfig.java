@@ -47,9 +47,10 @@ public class CreateConfig {
             config.write(out);
         }
 
+        String cacheLoc = System.getProperty("maven.dir") + "/fxcache";
         dir = configLoc + "/bootstrap";
 
-        copyJavafx();
+        cacheJavafx();
 
         config = Configuration.builder()
                         .baseUri("${maven.central.javafx}")
@@ -60,7 +61,7 @@ public class CreateConfig {
                         .file(FileMetadata.readFrom(dir + "/bootstrap-1.0.0.jar")
                                         .classpath()
                                         .uri("http://docs.update4j.org/demo/bootstrap/bootstrap-1.0.0.jar"))
-                        .files(FileMetadata.streamDirectory(dir)
+                        .files(FileMetadata.streamDirectory(cacheLoc)
                                         .filter(fm -> fm.getSource().getFileName().toString().startsWith("javafx"))
                                         .peek(f -> f.classpath())
                                         .peek(f -> f.ignoreBootConflict()) // if run with JDK 9/10
@@ -121,34 +122,27 @@ public class CreateConfig {
         return file.replaceAll("(.+)\\.jar", "$1-" + os.getShortName() + ".jar");
     }
 
-    private static void copyJavafx() throws IOException {
+    private static void cacheJavafx() throws IOException {
         String names = System.getProperty("target") + "/javafx";
-        String source = System.getProperty("maven.dir") + "/fxcache";
-        String target = System.getProperty("config.location") + "/bootstrap";
+        Path cacheDir = Paths.get(System.getProperty("maven.dir"), "fxcache");
 
         try (Stream<Path> files = Files.list(Paths.get(names))) {
             files.forEach(f -> {
                 try {
                     
-                    Path cacheDir = Paths.get(source);
                     if (!Files.isDirectory(cacheDir))
                         Files.createDirectory(cacheDir);
                     
                     for (OS os : EnumSet.of(OS.WINDOWS, OS.MAC, OS.LINUX)) {
-                        Path sourceFile = cacheDir.resolve(injectOs(f.getFileName().toString(), os));
+                        Path file = cacheDir.resolve(injectOs(f.getFileName().toString(), os));
 
-
-                        if (Files.notExists(sourceFile)) {
+                        if (Files.notExists(file)) {
                             String download = extractJavafxURL(f, os);
                             URI uri = URI.create(download);
                             try (InputStream in = uri.toURL().openStream()) {
-                                Files.copy(in, sourceFile);
+                                Files.copy(in, file);
                             }
                         }
-
-                        Path targetFile = Paths.get(target, injectOs(f.getFileName().toString(), os));
-                        if (Files.notExists(targetFile))
-                            Files.copy(sourceFile, targetFile);
                     }
 
                 } catch (Exception e) {
