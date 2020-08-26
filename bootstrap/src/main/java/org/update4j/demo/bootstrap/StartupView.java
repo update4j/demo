@@ -1,7 +1,12 @@
 package org.update4j.demo.bootstrap;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.update4j.Archive;
 import org.update4j.Configuration;
 import org.update4j.FileMetadata;
+import org.update4j.UpdateOptions;
 import org.update4j.inject.InjectSource;
 import org.update4j.inject.Injectable;
 import org.update4j.service.UpdateHandler;
@@ -189,7 +194,10 @@ public class StartupView extends FXMLView implements UpdateHandler, Injectable {
 
 					@Override
 					protected Void call() throws Exception {
-						config.update((UpdateHandler) StartupView.this);
+					    Path zip = Paths.get("business-update.zip");
+						if(config.update(UpdateOptions.archive(zip).updateHandler(StartupView.this)).getException() == null) {
+						    Archive.read(zip).install();
+						}
 
 						return null;
 					}
